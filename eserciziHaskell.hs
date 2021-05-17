@@ -1,19 +1,21 @@
--- Esercizio Numeri.1
+-- NUMERI
+-- Esercizio 1
 factorial 1 = 1
 factorial n = n * factorial (n-1)
 
--- Esercizio Numeri.2
+-- Esercizio 2
 binomial n k
     | k == 0    = 1
     | n == k    = 1
     | otherwise = binomial (n-1) k + binomial (n-1) (k-1)
 
--- Esercizio Liste.1
+-- LISTE
+-- Esercizio 1
 removeEven [] = []
 removeEven [x] = [x]
 removeEven (x:y:xs) = x : removeEven xs
 
--- Esercizio Liste.4
+-- Esercizio 4
 minOdd xs = minOddAux oddListWithoutFirstTwo firstMinTuple
     where
         oddList = [x | x <- xs, odd x]
@@ -24,8 +26,8 @@ minOdd xs = minOddAux oddListWithoutFirstTwo firstMinTuple
             | x < a                 = minOddAux xs (x, a)
             | (x >= a) && (x < b)   = minOddAux xs (a, x)
             | otherwise             = minOddAux xs (a, b)
-
--- Esercizio Matrici.1
+-- MATRICI
+-- Esercizio 1
 matrixDim m  = matrixDimAux (tail m) 1 (length (head  m))
     where
         matrixDimAux [] rows cols = (rows, cols)
@@ -33,7 +35,7 @@ matrixDim m  = matrixDimAux (tail m) 1 (length (head  m))
             | cols /= length r  = (-1, -1)
             | otherwise         = matrixDimAux m (rows + 1) cols
 
--- Esercizio Matrici.8
+-- Esercizio 8
 convergent m r = convergentAux m r 0
     where
         convergentAux [] r i      = True
@@ -44,10 +46,11 @@ convergent m r = convergentAux m r 0
                     | index == i    = sumRow xs (index + 1)
                     | otherwise     = x + sumRow xs (index + 1)
 
+-- ALBERI
 data BTree a = NullBTree | BTree a (BTree a) (BTree a)
     deriving (Eq, Ord, Read, Show)
 
--- Esercizio Alberi.4
+-- Esercizio 4
 bstElem NullBTree _ = False
 bstElem (BTree n left right) x
     | n == x    = True
@@ -55,7 +58,7 @@ bstElem (BTree n left right) x
     | otherwise = bstElem right x
 infixl 9 `bstElem`
 
--- Esercizio Alberi.9
+-- Esercizio 9
 data Node a = Leaf | Node a Integer
     deriving (Eq, Ord, Read, Show)
 
@@ -72,30 +75,34 @@ fold :: (Ord a) => (a -> b -> b -> b) -> b -> BTree a -> b
 fold _ z NullBTree = z
 fold f z (BTree x l r) = f x (fold f z l) (fold f z r)
 
--- Esercizio Alberi.14
+-- Esercizio 14
 treeHeight NullBTree = 0
 treeHeight tree = fold (\ val lacc racc -> 1 + max lacc racc) 0 tree
 
-
+-- ALBERI GENERICI
 data Tree a = NullTree | Tree a [Tree a]
     deriving (Eq, Show)
 
--- Esercizio Alberi Generici.1
+-- Esercizio 1
 treefold :: (Eq a, Show a) => (a -> [b] -> b) -> b -> Tree a -> b
 treefold f z NullTree = z
 treefold f z (Tree val sons) = f val [treefold f z x | x <- sons]
 
--- Esercizio Alberi Generici.2
+-- Esercizio 2
 height :: (Num p, Show a, Ord p, Eq a) => Tree a -> p
 height = treefold (\ x sonsHeight -> 1 + maxHeight sonsHeight) (-1)
     where
         maxHeight [] = -1
         maxHeight (x:xs) = max x (maxHeight xs)
 
--- Esercizio Alberi Generici.4
+-- Esercizio 4
 --treefoldr :: (Eq a, Show a) => (a -> b -> c) -> c -> (c -> b -> b) -> b -> Tree a -> c
 --treefoldr _ z _ _ NullTree = z
 --treefoldr f z g k (Tree val []) = treefoldr f z g k 
 --treefoldr f z g k (Tree val (x:sons)) = f val (g (treefoldr f z g k x) k)
 
--- Esercizio 
+-- QUAD TREES
+data QT a = C a | Q (QT a) (QT a) (QT a) (QT a)
+    deriving (Eq, Show)
+
+-- Esercizio 1
