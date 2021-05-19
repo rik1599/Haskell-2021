@@ -26,6 +26,18 @@ minOdd xs = minOddAux oddListWithoutFirstTwo firstMinTuple
             | x < a                 = minOddAux xs (x, a)
             | (x >= a) && (x < b)   = minOddAux xs (a, x)
             | otherwise             = minOddAux xs (a, b)
+
+-- Esercizio 6
+antecedentList xs = reverse (antecedentListAux xs 0 [])
+    where
+        antecedentListAux [] _ acc = acc
+        antecedentListAux (x:xs) sum acc = antecedentListAux xs (sum + x) ((x, sum) : acc)
+
+-- Esercizio 7
+shiftToZero xs = [x - min | x <- xs]
+    where
+        min = minimum xs
+
 -- MATRICI
 -- Esercizio 1
 matrixDim m  = matrixDimAux (tail m) 1 (length (head  m))
@@ -94,6 +106,16 @@ annotate (BTree x leftSon rightSon) = BTree (x, nodeHeight) newLeftSon newRightS
 fold :: (Ord a) => (a -> b -> b -> b) -> b -> BTree a -> b
 fold _ z NullBTree = z
 fold f z (BTree x l r) = f x (fold f z l) (fold f z r)
+
+-- Esercizio 12
+diff2next root = diff2nextAux root root
+    where
+        diff2nextAux NullBTree _ = NullBTree
+        diff2nextAux (BTree x l r) root = BTree (x, diffSucc) (diff2nextAux l root) (diff2nextAux r root)
+            where
+                diffSucc
+                    | successor (BTree x l r) root == NullBTree    = 0
+                
 
 -- Esercizio 14
 treeHeight NullBTree = 0
