@@ -24,7 +24,7 @@ minOdd xs = minOddAux oddListWithoutFirstTwo firstMinTuple
         minOddAux [] mins = mins
         minOddAux (x:xs) (a, b)
             | x < a                 = minOddAux xs (x, a)
-            | (x >= a) && (x < b)   = minOddAux xs (a, x)
+            | x >= a && x < b   = minOddAux xs (a, x)
             | otherwise             = minOddAux xs (a, b)
 
 -- Esercizio 6
@@ -51,7 +51,7 @@ matrixDim m  = matrixDimAux (tail m) 1 (length (head  m))
 convergent m r = convergentAux m r 0
     where
         convergentAux [] r i      = True
-        convergentAux (row:m) r i = convergentAux m r (i+1) && (abs(sumRow row 0) < r)
+        convergentAux (row:m) r i = convergentAux m r (i+1) && abs(sumRow row 0) < r
             where
                 sumRow [] _ = 0
                 sumRow (x:xs) index
@@ -74,7 +74,7 @@ matrixProd m1 m2 = matrixProdAux m1 tM2
                 calculateRow row (col:m2) = calculateElement row col 0: calculateRow row m2
                     where
                         calculateElement [] [] acc = acc
-                        calculateElement (x:row) (y:col) acc = calculateElement row col ((x*y) + acc)
+                        calculateElement (x:row) (y:col) acc = calculateElement row col (x*y + acc)
 
 -- ALBERI
 data BTree a = NullBTree | BTree a (BTree a) (BTree a)
@@ -113,11 +113,23 @@ diff2next root = diff2nextAux root root
         diff2nextAux NullBTree _ = NullBTree
         diff2nextAux (BTree x l r) root = BTree (x, diffSucc) (diff2nextAux l root) (diff2nextAux r root)
             where
+                getValue (BTree val _ _) = val
                 diffSucc
-                    | successor (BTree x l r) root == NullBTree    = 0
-                
+                    | successor == NullBTree    = 0
+                    | otherwise                 =  getValue successor - x
+                successor = inOrderSuccessor root (BTree x l r) NullBTree
+                    where
+                        inOrderSuccessor NullBTree _ _ = NullBTree
+                        inOrderSuccessor (BTree xRoot lRoot rRoot) (BTree x l r) s
+                            | xRoot == x    = if rRoot /= NullBTree then findMin rRoot else s
+                            | x < xRoot     = inOrderSuccessor lRoot (BTree x l r) (BTree xRoot lRoot rRoot)
+                            | otherwise     = inOrderSuccessor rRoot (BTree x l r) s
+                        findMin NullBTree = NullBTree
+                        findMin (BTree x NullBTree _) = BTree x NullBTree NullBTree
+                        findMin (BTree x l _) = findMin l
 
 -- Esercizio 14
+treeHeight :: (Num p, Ord a, Ord p) => BTree a -> p
 treeHeight NullBTree = 0
 treeHeight tree = fold (\ val lacc racc -> 1 + max lacc racc) 0 tree
 
@@ -145,5 +157,19 @@ simplify tree = treefold (\ val sons -> Tree val [x | x <- sons, x /= NullTree])
 -- Esercizio 4
 treefoldr :: (Eq a, Show a) => (a -> b -> c) -> c -> (c -> b -> b) -> b -> Tree a -> c
 treefoldr _ z _ _ NullTree = z
+treefoldr f z g k (Tree val sons) = f val (foldr (g . treefoldr f z g k) k sons)
+
+treefoldl :: (Eq a, Show a) => (b -> a -> c) -> c -> (c -> b -> b) -> b -> Tree a -> c
+treefoldl _ z _ _ NullTree = z
+treefoldl f z g k (Tree val sons) = f (foldl (\ w tree -> g (treefoldl f z g k tree) w) k sons) val
+
+-- Esercizio 5
+heighttreefoldr NullTree = -1
+heighttreefoldr tree = treefoldr (\ val maxSonHeight -> 1 + maxSonHeight) (-1) max (-1) tree
 
 -- Esercizio 10
+normalize :: (Integral a, Show a, Fractional b) => Tree a -> Tree b
+normalize NullTree = NullTree
+normalize tree = treefoldr (\ val sons -> Tree (fromIntegral val / fromIntegral inverse) sons) NullTree (:) [] tree
+    where
+        inverse = heighttreefoldr tree
