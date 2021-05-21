@@ -89,8 +89,11 @@ bstElem (BTree n left right) x
 infixl 9 `bstElem`
 
 -- Esercizio 6
-bst2List NullBTree = []
-bst2List (BTree x l r) = bst2List l ++ (x : bst2List r)
+bst2List :: BTree a -> [a]
+bst2List tree = linearInOrder tree []
+    where
+        linearInOrder NullBTree acc = acc
+        linearInOrder (BTree x l r) acc = linearInOrder l (x : linearInOrder r acc) 
 
 -- Esercizio 9
 annotate :: (Num b, Ord b) => BTree a -> BTree (a, b)
