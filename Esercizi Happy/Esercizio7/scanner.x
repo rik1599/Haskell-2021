@@ -16,14 +16,19 @@ $digit = 0-9
 $alpha = [a-zA-z]
 
 tokens :-
-    $white+     ;
-    \=          { \s -> TokenEq }
-    \+          { \s -> TokenPlus }
-    \-          { \s -> TokenMinus }
-    \*          { \s -> TokenTimes }
-    \(          { \s -> TokenOpenRound }
-    \)          { \s -> TokenClosedRound }
-    @num        { \s -> TokenNum (read s) }
+    $white+                                     ;
+    "##".*                                      ;
+    \=                                          { \s -> TokenEq }
+    \+                                          { \s -> TokenPlus }
+    \-                                          { \s -> TokenMinus }
+    \*                                          { \s -> TokenTimes }
+    \(                                          { \s -> TokenOpenRound }
+    \)                                          { \s -> TokenClosedRound }
+    @num                                        { \s -> TokenNum (read s) }
+    let                                         { \s -> TokenLet }
+    [$alpha \_] [$alpha $digit \_ \']*          { \s -> TokenVar s }
+    case                                        { \s -> TokenCase }
+    else                                        { \s -> TokenElse }
 
 {
 data Token
@@ -33,6 +38,11 @@ data Token
     | TokenTimes
     | TokenOpenRound
     | TokenClosedRound
+    | TokenEq
+    | TokenLet
+    | TokenVar String
+    | TokenCase
+    | TokenElse
     deriving (Eq,Show)
 
 lexer = alexScanTokens

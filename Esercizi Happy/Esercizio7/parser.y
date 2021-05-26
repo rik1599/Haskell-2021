@@ -22,19 +22,45 @@ import Scanner
     '('     { TokenOpenRound }
     ')'     { TokenClosedRound }
     num     { TokenNum $$ }
+    var     { TokenVar $$ }
+    let     { TokenLet }
+    case    { TokenCase }
+    else    { TokenElse }
 
+%left '='
 %left '+' '-'
 %left '*'
 %left NEG
 %%
 
-Exp         : Exp '+' Exp               {\p -> $1 p + $3 p}
-            | Exp '-' Exp               {\p -> $1 p - $3 p}
-            | Exp '*' Exp               {\p -> $1 p * $3 p}
-            | Exp '/' Exp               {\p -> $1 p `div` $3 p}
-            | '-' Exp %prec NEG         {\p -> - $2 p}
-            | num                       {$1}
-            
+Sequence    : Exp Sequence  {}
+            | {- Empty -}   {}
+
+Exp         : Literal       {}
+            | LetExp        {}
+            | CaseExp       {}
+
+Literal     : Literal '+' Literal   {}
+            | Literal '-' Literal   {}
+            | Literal '*' Literal   {}
+            | Literal '=' Literal   {}
+            | '-' Literal %prec NEG {}
+            | '(' Literal ')'       {}
+            | num                   {}
+            | var                   {}
+
+LetExp      : '(' let '(' Declaration ')' '(' Exp ')' ')'   {}
+
+CaseExp     : '(' case '(' Exp ')' CaseBody ')'             {}
+            | '(' case '(' Exp ')' CaseBody ElseBody ')'    {}
+
+Declaration : '(' var Exp ')' Declaration                   {}
+            | {- Empty -}                                   {}
+
+CaseBody    : '(' '(' Literal ')' Exp ')' CaseBody      {}
+            | {- Empty -}                               {}
+
+ElseBody    : '(' else Exp ')'      {}
 
 {
 
