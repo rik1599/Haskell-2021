@@ -1,0 +1,197 @@
+Info file produced by Alex version 3.2.5, from Scanner.x
+-----------------------------------------------------------------------------
+
+
+Start codes
+[0]
+Scanner
+Scanner {scannerName = "tokens", scannerTokens = [[..]+,[..] { alex_action_1 },[..] { alex_action_2 },[..] { alex_action_3 },[..]|[..] { alex_action_4 },[..] { alex_action_5 },[..] { alex_action_6 },[..] { alex_action_7 },[..] { alex_action_8 },[..] { alex_action_9 },[..] { alex_action_10 },[..]+ { alex_action_11 }]}
+NFA
+array (0,28) [(0,NSt [] [27,25,23,21,19,17,15,13,11,9,7,5,3,1,0] []),(1,NSt [] [3,1] []),(2,NSt [0] [2] []),(3,NSt [] [3] [(RSet {rSetRanges = [x == 32]},4),(RSet {rSetRanges = [9 <= x <= 13]},4)]),(4,NSt [] [2,3,4] []),(5,NSt [] [5] [(RSet {rSetRanges = [x == 43]},6)]),(6,NSt [1] [6] []),(7,NSt [] [7] [(RSet {rSetRanges = [x == 45]},8)]),(8,NSt [2] [8] []),(9,NSt [] [9] [(RSet {rSetRanges = [x == 42]},10)]),(10,NSt [3] [10] []),(11,NSt [] [11] [(RSet {rSetRanges = [x == 58]},12),(RSet {rSetRanges = [x == 47]},12)]),(12,NSt [4] [12] []),(13,NSt [] [13] [(RSet {rSetRanges = [x == 40]},14)]),(14,NSt [5] [14] []),(15,NSt [] [15] [(RSet {rSetRanges = [x == 41]},16)]),(16,NSt [6] [16] []),(17,NSt [] [17] [(RSet {rSetRanges = [x == 91]},18)]),(18,NSt [7] [18] []),(19,NSt [] [19] [(RSet {rSetRanges = [x == 93]},20)]),(20,NSt [8] [20] []),(21,NSt [] [21] [(RSet {rSetRanges = [x == 123]},22)]),(22,NSt [9] [22] []),(23,NSt [] [23] [(RSet {rSetRanges = [x == 125]},24)]),(24,NSt [10] [24] []),(25,NSt [] [27,25] []),(26,NSt [11] [26] []),(27,NSt [] [27] [(RSet {rSetRanges = [48 <= x <= 57]},28)]),(28,NSt [] [26,27,28] [])]
+DFAScanner : tokens
+States  : 13
+
+State 0
+	9        -> 1
+	10       -> 1
+	11       -> 1
+	12       -> 1
+	13       -> 1
+	32       -> 1
+	40       -> 6
+	41       -> 7
+	42       -> 4
+	43       -> 2
+	45       -> 3
+	47       -> 5
+	48       -> 12
+	49       -> 12
+	50       -> 12
+	51       -> 12
+	52       -> 12
+	53       -> 12
+	54       -> 12
+	55       -> 12
+	56       -> 12
+	57       -> 12
+	58       -> 5
+	91       -> 8
+	93       -> 9
+	123      -> 10
+	125      -> 11
+
+State 1
+	Accept(0)  
+	9        -> 1
+	10       -> 1
+	11       -> 1
+	12       -> 1
+	13       -> 1
+	32       -> 1
+
+State 2
+	Accept(1)   { alex_action_1 }
+	
+
+State 3
+	Accept(2)   { alex_action_2 }
+	
+
+State 4
+	Accept(3)   { alex_action_3 }
+	
+
+State 5
+	Accept(4)   { alex_action_4 }
+	
+
+State 6
+	Accept(5)   { alex_action_5 }
+	
+
+State 7
+	Accept(6)   { alex_action_6 }
+	
+
+State 8
+	Accept(7)   { alex_action_7 }
+	
+
+State 9
+	Accept(8)   { alex_action_8 }
+	
+
+State 10
+	Accept(9)   { alex_action_9 }
+	
+
+State 11
+	Accept(10)   { alex_action_10 }
+	
+
+State 12
+	Accept(11)   { alex_action_11 }
+	48       -> 12
+	49       -> 12
+	50       -> 12
+	51       -> 12
+	52       -> 12
+	53       -> 12
+	54       -> 12
+	55       -> 12
+	56       -> 12
+	57       -> 12
+
+Minimized DFAScanner : tokens
+States  : 13
+
+State 0
+	9        -> 1
+	10       -> 1
+	11       -> 1
+	12       -> 1
+	13       -> 1
+	32       -> 1
+	40       -> 6
+	41       -> 7
+	42       -> 4
+	43       -> 2
+	45       -> 3
+	47       -> 5
+	48       -> 12
+	49       -> 12
+	50       -> 12
+	51       -> 12
+	52       -> 12
+	53       -> 12
+	54       -> 12
+	55       -> 12
+	56       -> 12
+	57       -> 12
+	58       -> 5
+	91       -> 8
+	93       -> 9
+	123      -> 10
+	125      -> 11
+
+State 1
+	Accept(0)  
+	9        -> 1
+	10       -> 1
+	11       -> 1
+	12       -> 1
+	13       -> 1
+	32       -> 1
+
+State 2
+	Accept(1)   { alex_action_1 }
+	
+
+State 3
+	Accept(2)   { alex_action_2 }
+	
+
+State 4
+	Accept(3)   { alex_action_3 }
+	
+
+State 5
+	Accept(4)   { alex_action_4 }
+	
+
+State 6
+	Accept(5)   { alex_action_5 }
+	
+
+State 7
+	Accept(6)   { alex_action_6 }
+	
+
+State 8
+	Accept(7)   { alex_action_7 }
+	
+
+State 9
+	Accept(8)   { alex_action_8 }
+	
+
+State 10
+	Accept(9)   { alex_action_9 }
+	
+
+State 11
+	Accept(10)   { alex_action_10 }
+	
+
+State 12
+	Accept(11)   { alex_action_11 }
+	48       -> 12
+	49       -> 12
+	50       -> 12
+	51       -> 12
+	52       -> 12
+	53       -> 12
+	54       -> 12
+	55       -> 12
+	56       -> 12
+	57       -> 12

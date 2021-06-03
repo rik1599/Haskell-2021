@@ -20,7 +20,7 @@ tokens :-
     \+          { \s -> TokenPlus }
     \-          { \s -> TokenMinus }
     \*          { \s -> TokenTimes }
-    \/          { \s -> TokenDiv }
+    (\/|\:)     { \s -> TokenDiv }
     \(          { \s -> TokenOpenRound }
     \)          { \s -> TokenClosedRound }
     \[          { \s -> TokenOpenBox }
