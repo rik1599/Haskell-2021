@@ -24,6 +24,8 @@ tokens :-
     \*                                          { \s -> TokenTimes }
     \(                                          { \s -> TokenOpenRound }
     \)                                          { \s -> TokenClosedRound }
+    \[                                          { \s -> TokenOpenBox }
+    \]                                          { \s -> TokenClosedBox }
     @num                                        { \s -> TokenNum (read s) }
     let                                         { \s -> TokenLet }
     [$alpha \_] [$alpha $digit \_ \']*          { \s -> TokenVar s }
@@ -38,6 +40,8 @@ data Token
     | TokenTimes
     | TokenOpenRound
     | TokenClosedRound
+    | TokenOpenBox
+    | TokenClosedBox
     | TokenEq
     | TokenLet
     | TokenVar String

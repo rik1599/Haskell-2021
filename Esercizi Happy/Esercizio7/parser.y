@@ -21,6 +21,8 @@ import Scanner
     '*'     { TokenTimes }
     '('     { TokenOpenRound }
     ')'     { TokenClosedRound }
+    '['     { TokenOpenBox }
+    ']'     { TokenClosedBox }
     num     { TokenNum $$ }
     var     { TokenVar $$ }
     let     { TokenLet }
@@ -30,37 +32,27 @@ import Scanner
 %left '='
 %left '+' '-'
 %left '*'
-%left NEG
 %%
 
-Sequence    : Exp Sequence  {}
-            | {- Empty -}   {}
+Seq     : Seq '(' Exp ')'       { $2 : $1 }
+        | {- Empty -}           { [] }
 
-Exp         : Literal       {}
-            | LetExp        {}
-            | CaseExp       {}
+Exp     : let '(' Declaration ')' '(' Exp ')'       {Let $3 $6}
+        | case '(' Exp ')' ThenBody                 {Case $3 $5}
+        | '+' Exp Exp       {Plus $2 $3}
+        | '-' Exp Exp       {Minus $2 $3}
+        | '*' Exp Exp       {Times $2 $3}
+        | '=' Exp Exp       {Equal $2 $3}
+        | '(' Exp ')'       {$2}
+        | num               {Num $1}
+        | var               {Var $1}
 
-Literal     : Literal '+' Literal   {}
-            | Literal '-' Literal   {}
-            | Literal '*' Literal   {}
-            | Literal '=' Literal   {}
-            | '-' Literal %prec NEG {}
-            | '(' Literal ')'       {}
-            | num                   {}
-            | var                   {}
+Declaration     : Declaration '[' var '(' Exp ')' ']'  { (Declaration $3 $5) : $1 }
+                | {- Empty -}   { [] }
 
-LetExp      : '(' let '(' Declaration ')' '(' Exp ')' ')'   {}
-
-CaseExp     : '(' case '(' Exp ')' CaseBody ')'             {}
-            | '(' case '(' Exp ')' CaseBody ElseBody ')'    {}
-
-Declaration : '(' var Exp ')' Declaration                   {}
-            | {- Empty -}                                   {}
-
-CaseBody    : '(' '(' Literal ')' Exp ')' CaseBody      {}
-            | {- Empty -}                               {}
-
-ElseBody    : '(' else Exp ')'      {}
+ThenBody        : '[' '(' Exp ')' '(' Exp ')' ']' '[' else '(' Exp ')' ']'     { (Then $3 $5) : (Else $5) : [] }
+                | '[' '(' Exp ')' '(' Exp ')' ']' ThenBody                     { (Then $3 $5) : $9}
+                | {- Empty -}   {[]}
 
 {
 
@@ -69,6 +61,5 @@ parseError _ = error "Parse error"
 
 main = do
     s <- getContents
-    print (lexer s)
     print (calc (lexer s) [])
 }
