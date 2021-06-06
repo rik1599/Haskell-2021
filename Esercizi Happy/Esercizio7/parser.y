@@ -34,11 +34,13 @@ import Scanner
 %left '*'
 %%
 
-Seq     : Seq '(' Exp ')'       { $2 : $1 }
+Seq     :: { [Exp] }
+Seq     : Seq '(' Exp ')'       { $3 : $1 }
         | {- Empty -}           { [] }
 
-Exp     : let '(' Declaration ')' '(' Exp ')'       {Let $3 $6}
-        | case '(' Exp ')' ThenBody                 {Case $3 $5}
+Exp     :: { Exp }
+Exp     : let '(' Declarations ')' '(' Exp ')'       {Let $3 $6}
+        | case '(' Exp ')' ThenBody                  {Case $3 $5}
         | '+' Exp Exp       {Plus $2 $3}
         | '-' Exp Exp       {Minus $2 $3}
         | '*' Exp Exp       {Times $2 $3}
@@ -47,19 +49,43 @@ Exp     : let '(' Declaration ')' '(' Exp ')'       {Let $3 $6}
         | num               {Num $1}
         | var               {Var $1}
 
-Declaration     : Declaration '[' var '(' Exp ')' ']'  { (Declaration $3 $5) : $1 }
+Declarations    :: { [Declaration] }    
+Declarations    : Declarations '[' var '(' Exp ')' ']'  { (Declaration $3 $5) : $1 }
                 | {- Empty -}   { [] }
 
-ThenBody        : '[' '(' Exp ')' '(' Exp ')' ']' '[' else '(' Exp ')' ']'     { (Then $3 $5) : (Else $5) : [] }
-                | '[' '(' Exp ')' '(' Exp ')' ']' ThenBody                     { (Then $3 $5) : $9}
-                | {- Empty -}   {[]}
+ThenBody        :: { [Then] }
+ThenBody        : '[' '(' Exp ')' '(' Exp ')' ']' '[' else '(' Exp ')' ']'     { (Then $3 $6) : (Else $12) : [] }
+                | '[' '(' Exp ')' '(' Exp ')' ']' ThenBody                     { (Then $3 $6) : $9 }
+                | {- Empty -}   { [] }
 
 {
+
+data Exp    
+    = Let [Declaration] Exp
+    | Case Exp [Then]
+    | Plus Exp Exp
+    | Minus Exp Exp
+    | Times Exp Exp
+    | Equal Exp Exp
+    | Num Int
+    | Var String
+    deriving Show
+
+data Declaration
+    = Declaration String Exp
+    deriving Show
+
+data Then
+    = Then Exp Exp
+    | Else Exp
+    deriving Show
+
 
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 main = do
     s <- getContents
-    print (calc (lexer s) [])
+    print (lexer s)
+    print (calc (lexer s))
 }

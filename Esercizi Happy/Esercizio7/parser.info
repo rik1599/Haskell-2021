@@ -9,7 +9,7 @@ Grammar
 	%start_calc -> Seq                                 (0)
 	Seq -> Seq '(' Exp ')'                             (1)
 	Seq ->                                             (2)
-	Exp -> let '(' Declaration ')' '(' Exp ')'         (3)
+	Exp -> let '(' Declarations ')' '(' Exp ')'        (3)
 	Exp -> case '(' Exp ')' ThenBody                   (4)
 	Exp -> '+' Exp Exp                                 (5)
 	Exp -> '-' Exp Exp                                 (6)
@@ -18,8 +18,8 @@ Grammar
 	Exp -> '(' Exp ')'                                 (9)
 	Exp -> num                                         (10)
 	Exp -> var                                         (11)
-	Declaration -> Declaration '[' var '(' Exp ')' ']'   (12)
-	Declaration ->                                     (13)
+	Declarations -> Declarations '[' var '(' Exp ')' ']'   (12)
+	Declarations ->                                    (13)
 	ThenBody -> '[' '(' Exp ')' '(' Exp ')' ']' '[' else '(' Exp ')' ']'   (14)
 	ThenBody -> '[' '(' Exp ')' '(' Exp ')' ']' ThenBody   (15)
 	ThenBody ->                                        (16)
@@ -47,7 +47,7 @@ Non-terminals
 	%start_calc     rule  0
 	Seq             rules 1, 2
 	Exp             rules 3, 4, 5, 6, 7, 8, 9, 10, 11
-	Declaration     rules 12, 13
+	Declarations    rules 12, 13
 	ThenBody        rules 14, 15, 16
 
 -----------------------------------------------------------------------------
@@ -220,7 +220,7 @@ State 12
 
 State 13
 
-	Exp -> let . '(' Declaration ')' '(' Exp ')'        (rule 3)
+	Exp -> let . '(' Declarations ')' '(' Exp ')'       (rule 3)
 
 	'('            shift, and enter state 16
 
@@ -250,12 +250,12 @@ State 15
 
 State 16
 
-	Exp -> let '(' . Declaration ')' '(' Exp ')'        (rule 3)
+	Exp -> let '(' . Declarations ')' '(' Exp ')'       (rule 3)
 
 	')'            reduce using rule 13
 	'['            reduce using rule 13
 
-	Declaration    goto state 28
+	Declarations   goto state 28
 
 State 17
 
@@ -418,8 +418,8 @@ State 27
 
 State 28
 
-	Exp -> let '(' Declaration . ')' '(' Exp ')'        (rule 3)
-	Declaration -> Declaration . '[' var '(' Exp ')' ']'    (rule 12)
+	Exp -> let '(' Declarations . ')' '(' Exp ')'       (rule 3)
+	Declarations -> Declarations . '[' var '(' Exp ')' ']'    (rule 12)
 
 	')'            shift, and enter state 31
 	'['            shift, and enter state 32
@@ -452,28 +452,28 @@ State 30
 
 State 31
 
-	Exp -> let '(' Declaration ')' . '(' Exp ')'        (rule 3)
+	Exp -> let '(' Declarations ')' . '(' Exp ')'       (rule 3)
 
 	'('            shift, and enter state 34
 
 
 State 32
 
-	Declaration -> Declaration '[' . var '(' Exp ')' ']'    (rule 12)
+	Declarations -> Declarations '[' . var '(' Exp ')' ']'    (rule 12)
 
 	var            shift, and enter state 33
 
 
 State 33
 
-	Declaration -> Declaration '[' var . '(' Exp ')' ']'    (rule 12)
+	Declarations -> Declarations '[' var . '(' Exp ')' ']'    (rule 12)
 
 	'('            shift, and enter state 39
 
 
 State 34
 
-	Exp -> let '(' Declaration ')' '(' . Exp ')'        (rule 3)
+	Exp -> let '(' Declarations ')' '(' . Exp ')'       (rule 3)
 
 	'='            shift, and enter state 6
 	'+'            shift, and enter state 7
@@ -530,14 +530,14 @@ State 37
 
 State 38
 
-	Exp -> let '(' Declaration ')' '(' Exp . ')'        (rule 3)
+	Exp -> let '(' Declarations ')' '(' Exp . ')'       (rule 3)
 
 	')'            shift, and enter state 41
 
 
 State 39
 
-	Declaration -> Declaration '[' var '(' . Exp ')' ']'    (rule 12)
+	Declarations -> Declarations '[' var '(' . Exp ')' ']'    (rule 12)
 
 	'='            shift, and enter state 6
 	'+'            shift, and enter state 7
@@ -553,14 +553,14 @@ State 39
 
 State 40
 
-	Declaration -> Declaration '[' var '(' Exp . ')' ']'    (rule 12)
+	Declarations -> Declarations '[' var '(' Exp . ')' ']'    (rule 12)
 
 	')'            shift, and enter state 44
 
 
 State 41
 
-	Exp -> let '(' Declaration ')' '(' Exp ')' .        (rule 3)
+	Exp -> let '(' Declarations ')' '(' Exp ')' .       (rule 3)
 
 	'='            reduce using rule 3
 	'+'            reduce using rule 3
@@ -592,14 +592,14 @@ State 43
 
 State 44
 
-	Declaration -> Declaration '[' var '(' Exp ')' . ']'    (rule 12)
+	Declarations -> Declarations '[' var '(' Exp ')' . ']'    (rule 12)
 
 	']'            shift, and enter state 45
 
 
 State 45
 
-	Declaration -> Declaration '[' var '(' Exp ')' ']' .    (rule 12)
+	Declarations -> Declarations '[' var '(' Exp ')' ']' .    (rule 12)
 
 	')'            reduce using rule 12
 	'['            reduce using rule 12

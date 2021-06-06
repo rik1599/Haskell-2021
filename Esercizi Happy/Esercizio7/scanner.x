@@ -28,9 +28,9 @@ tokens :-
     \]                                          { \s -> TokenClosedBox }
     @num                                        { \s -> TokenNum (read s) }
     let                                         { \s -> TokenLet }
-    [$alpha \_] [$alpha $digit \_ \']*          { \s -> TokenVar s }
     case                                        { \s -> TokenCase }
     else                                        { \s -> TokenElse }
+    [$alpha \_] [$alpha $digit \_ \']*          { \s -> TokenVar s }
 
 {
 data Token

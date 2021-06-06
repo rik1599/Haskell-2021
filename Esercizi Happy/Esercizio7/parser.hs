@@ -8,13 +8,115 @@ import Control.Monad (ap)
 
 -- parser produced by Happy Version 1.19.12
 
-data HappyAbsSyn t4 t5 t6 t7
+data HappyAbsSyn 
 	= HappyTerminal (Token)
 	| HappyErrorToken Int
-	| HappyAbsSyn4 t4
-	| HappyAbsSyn5 t5
-	| HappyAbsSyn6 t6
-	| HappyAbsSyn7 t7
+	| HappyAbsSyn4 ([Exp])
+	| HappyAbsSyn5 (Exp)
+	| HappyAbsSyn6 ([Declaration])
+	| HappyAbsSyn7 ([Then])
+
+{- to allow type-synonyms as our monads (likely
+ - with explicitly-specified bind and return)
+ - in Haskell98, it seems that with
+ - /type M a = .../, then /(HappyReduction M)/
+ - is not allowed.  But Happy is a
+ - code-generator that can just substitute it.
+type HappyReduction m = 
+	   Int 
+	-> (Token)
+	-> HappyState (Token) (HappyStk HappyAbsSyn -> [(Token)] -> m HappyAbsSyn)
+	-> [HappyState (Token) (HappyStk HappyAbsSyn -> [(Token)] -> m HappyAbsSyn)] 
+	-> HappyStk HappyAbsSyn 
+	-> [(Token)] -> m HappyAbsSyn
+-}
+
+action_0,
+ action_1,
+ action_2,
+ action_3,
+ action_4,
+ action_5,
+ action_6,
+ action_7,
+ action_8,
+ action_9,
+ action_10,
+ action_11,
+ action_12,
+ action_13,
+ action_14,
+ action_15,
+ action_16,
+ action_17,
+ action_18,
+ action_19,
+ action_20,
+ action_21,
+ action_22,
+ action_23,
+ action_24,
+ action_25,
+ action_26,
+ action_27,
+ action_28,
+ action_29,
+ action_30,
+ action_31,
+ action_32,
+ action_33,
+ action_34,
+ action_35,
+ action_36,
+ action_37,
+ action_38,
+ action_39,
+ action_40,
+ action_41,
+ action_42,
+ action_43,
+ action_44,
+ action_45,
+ action_46,
+ action_47,
+ action_48,
+ action_49,
+ action_50,
+ action_51,
+ action_52,
+ action_53,
+ action_54,
+ action_55,
+ action_56 :: () => Int -> ({-HappyReduction (HappyIdentity) = -}
+	   Int 
+	-> (Token)
+	-> HappyState (Token) (HappyStk HappyAbsSyn -> [(Token)] -> (HappyIdentity) HappyAbsSyn)
+	-> [HappyState (Token) (HappyStk HappyAbsSyn -> [(Token)] -> (HappyIdentity) HappyAbsSyn)] 
+	-> HappyStk HappyAbsSyn 
+	-> [(Token)] -> (HappyIdentity) HappyAbsSyn)
+
+happyReduce_1,
+ happyReduce_2,
+ happyReduce_3,
+ happyReduce_4,
+ happyReduce_5,
+ happyReduce_6,
+ happyReduce_7,
+ happyReduce_8,
+ happyReduce_9,
+ happyReduce_10,
+ happyReduce_11,
+ happyReduce_12,
+ happyReduce_13,
+ happyReduce_14,
+ happyReduce_15,
+ happyReduce_16 :: () => ({-HappyReduction (HappyIdentity) = -}
+	   Int 
+	-> (Token)
+	-> HappyState (Token) (HappyStk HappyAbsSyn -> [(Token)] -> (HappyIdentity) HappyAbsSyn)
+	-> [HappyState (Token) (HappyStk HappyAbsSyn -> [(Token)] -> (HappyIdentity) HappyAbsSyn)] 
+	-> HappyStk HappyAbsSyn 
+	-> [(Token)] -> (HappyIdentity) HappyAbsSyn)
 
 happyExpList :: Happy_Data_Array.Array Int Int
 happyExpList = Happy_Data_Array.listArray (0,72) ([0,0,0,32,1024,63488,120,32,58336,31745,32828,1935,61936,15872,30,0,0,4096,0,2,15484,0,0,2,7742,51136,63491,120,3871,0,0,0,0,0,0,0,0,768,8192,0,8,64,0,1,1,7742,0,32768,0,3871,1024,31744,60,16,0,16384,0,4,1024,0,57344,483,128,16384,0,4,0,1024,32772,0,3871,1024,0,2,0,0
@@ -23,7 +125,7 @@ happyExpList = Happy_Data_Array.listArray (0,72) ([0,0,0,32,1024,63488,120,32,58
 {-# NOINLINE happyExpListPerState #-}
 happyExpListPerState st =
     token_strs_expected
-  where token_strs = ["error","%dummy","%start_calc","Seq","Exp","Declaration","ThenBody","'='","'+'","'-'","'*'","'('","')'","'['","']'","num","var","let","case","else","%eof"]
+  where token_strs = ["error","%dummy","%start_calc","Seq","Exp","Declarations","ThenBody","'='","'+'","'-'","'*'","'('","')'","'['","']'","num","var","let","case","else","%eof"]
         bit_start = st * 21
         bit_end = (st + 1) * 21
         read_bit = readArrayBit happyExpList
@@ -342,12 +444,12 @@ action_56 _ = happyReduce_14
 
 happyReduce_1 = happyReduce 4 4 happyReduction_1
 happyReduction_1 (_ `HappyStk`
+	(HappyAbsSyn5  happy_var_3) `HappyStk`
 	_ `HappyStk`
-	(HappyTerminal happy_var_2) `HappyStk`
 	(HappyAbsSyn4  happy_var_1) `HappyStk`
 	happyRest)
 	 = HappyAbsSyn4
-		 (happy_var_2 : happy_var_1
+		 (happy_var_3 : happy_var_1
 	) `HappyStk` happyRest
 
 happyReduce_2 = happySpecReduce_0  4 happyReduction_2
@@ -459,36 +561,36 @@ happyReduction_13  =  HappyAbsSyn6
 happyReduce_14 = happyReduce 14 7 happyReduction_14
 happyReduction_14 (_ `HappyStk`
 	_ `HappyStk`
+	(HappyAbsSyn5  happy_var_12) `HappyStk`
 	_ `HappyStk`
 	_ `HappyStk`
 	_ `HappyStk`
 	_ `HappyStk`
 	_ `HappyStk`
+	(HappyAbsSyn5  happy_var_6) `HappyStk`
 	_ `HappyStk`
-	_ `HappyStk`
-	(HappyTerminal happy_var_5) `HappyStk`
 	_ `HappyStk`
 	(HappyAbsSyn5  happy_var_3) `HappyStk`
 	_ `HappyStk`
 	_ `HappyStk`
 	happyRest)
 	 = HappyAbsSyn7
-		 ((Then happy_var_3 happy_var_5) : (Else happy_var_5) : []
+		 ((Then happy_var_3 happy_var_6) : (Else happy_var_12) : []
 	) `HappyStk` happyRest
 
 happyReduce_15 = happyReduce 9 7 happyReduction_15
 happyReduction_15 ((HappyAbsSyn7  happy_var_9) `HappyStk`
 	_ `HappyStk`
 	_ `HappyStk`
+	(HappyAbsSyn5  happy_var_6) `HappyStk`
 	_ `HappyStk`
-	(HappyTerminal happy_var_5) `HappyStk`
 	_ `HappyStk`
 	(HappyAbsSyn5  happy_var_3) `HappyStk`
 	_ `HappyStk`
 	_ `HappyStk`
 	happyRest)
 	 = HappyAbsSyn7
-		 ((Then happy_var_3 happy_var_5) : happy_var_9
+		 ((Then happy_var_3 happy_var_6) : happy_var_9
 	) `HappyStk` happyRest
 
 happyReduce_16 = happySpecReduce_0  7 happyReduction_16
@@ -550,12 +652,9 @@ calc tks = happyRunIdentity happySomeParser where
 happySeq = happyDontSeq
 
 
-parseError :: [Token] -> a
-parseError _ = error "Parse error"
-
-data Exp
+data Exp    
     = Let [Declaration] Exp
-    | Case Exp [ThenBody]
+    | Case Exp [Then]
     | Plus Exp Exp
     | Minus Exp Exp
     | Times Exp Exp
@@ -568,14 +667,19 @@ data Declaration
     = Declaration String Exp
     deriving Show
 
-data ThenBody
+data Then
     = Then Exp Exp
     | Else Exp
     deriving Show
 
+
+parseError :: [Token] -> a
+parseError _ = error "Parse error"
+
 main = do
     s <- getContents
-    print (calc (lexer s) [])
+    print (lexer s)
+    print (calc (lexer s))
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 

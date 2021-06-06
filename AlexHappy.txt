@@ -1,0 +1,301 @@
+-- Analizzatori Lessicali
+-- Esercizio 3
+%{
+%}
+
+%%
+\/\/(.*)            {};     //Single line comment
+\/\*(.*\n)*.*\*\/   {};     //Multi line comment
+%%
+
+int yywrap()
+{
+    return 1;
+}
+
+int main()
+{
+    yylex();
+    return 0;
+}
+
+-- Esercizio 7
+{
+module Main (main) where
+}
+
+%wrapper "basic"
+
+$digit = 0-9
+@number = $digit+
+@sign = (\+|\-)?
+@intNumber = @sign@number
+@fracNumber = (@intNumber\.$digit*)|(@sign\.@number)
+@floatingPointNumber = (@intNumber|@fracNumber)(e|E)(@intNumber)
+
+tokens :-
+
+    $white+                 ;
+    @intNumber              { \s -> Int s (length s) }
+    @fracNumber             { \s -> Frac s (length s) }
+    @floatingPointNumber    { \s -> Float s (length s) }
+
+{
+data Token =
+    Int String Int |
+    Frac String Int |
+    Float String Int
+    deriving (Eq, Show)
+
+main = do
+    s <- getContents
+    print (alexScanTokens s)
+}
+
+-- Analizzatori Sintattici
+-- Esercizio 2
+-- Scanner
+{
+module Scanner (Token(..), lexer) where
+}
+
+%wrapper "basic"
+
+$digit = 0-9
+@num = $digit+
+
+tokens :-
+
+    $white+     ;
+    \+          { \s -> TokenPlus }
+    \-          { \s -> TokenMinus }
+    \*          { \s -> TokenTimes }
+    (\/|\:)     { \s -> TokenDiv }
+    \(          { \s -> TokenOpenRound }
+    \)          { \s -> TokenClosedRound }
+    \[          { \s -> TokenOpenBox }
+    \]          { \s -> TokenClosedBox }
+    \{          { \s -> TokenOpenCurly }
+    \}          { \s -> TokenClosedCurly }
+    @num        { \s -> TokenNum (read s) }
+
+{
+data Token
+    = TokenNum Int
+    | TokenPlus
+    | TokenMinus
+    | TokenTimes
+    | TokenDiv
+    | TokenOpenRound
+    | TokenClosedRound
+    | TokenOpenBox
+    | TokenClosedBox
+    | TokenOpenCurly
+    | TokenClosedCurly
+    deriving (Eq,Show)
+
+lexer = alexScanTokens
+}
+
+-- Parser
+{
+module Main (main) where
+import Scanner
+}
+
+%name calc
+%tokentype { Token }
+%error { parseError }
+
+%token
+    '+'     { TokenPlus }
+    '-'     { TokenMinus }
+    '*'     { TokenTimes }
+    '/'     { TokenDiv }
+    '('     { TokenOpenRound }
+    ')'     { TokenClosedRound }
+    '['     { TokenOpenBox }
+    ']'     { TokenClosedBox }
+    '{'     { TokenOpenCurly }
+    '}'     { TokenClosedCurly }
+    num     { TokenNum $$ }
+
+%left '+' '-'
+%left '*' '/'
+%%
+
+Exp     : Exp '+' Exp           {$1 + $3}
+        | Exp '-' Exp           {$1 - $3}
+        | Exp '*' Exp           {$1 * $3}
+        | Exp '/' Exp           {$1 `div` $3}
+        | '{' CurlyExp '}'      {$2}
+        | '[' BoxExp ']'        {$2}
+        | '(' LiteralExp ')'    {$2}
+        | num                   {$1}
+
+CurlyExp    : CurlyExp '+' CurlyExp    {$1 + $3}
+            | CurlyExp '-' CurlyExp    {$1 - $3}
+            | CurlyExp '*' CurlyExp    {$1 * $3}
+            | CurlyExp '/' CurlyExp    {$1 `div` $3}
+            | '[' BoxExp ']'           {$2}
+            | '(' LiteralExp ')'       {$2}
+            | num                      {$1}
+
+BoxExp      : BoxExp '+' BoxExp         {$1 + $3}
+            | BoxExp '-' BoxExp         {$1 - $3}
+            | BoxExp '*' BoxExp         {$1 * $3}
+            | BoxExp '/' BoxExp         {$1 `div` $3}
+            | '(' LiteralExp ')'        {$2}
+            | num                       {$1}
+
+LiteralExp      : LiteralExp '+' LiteralExp       {$1 + $3}
+                | LiteralExp '-' LiteralExp       {$1 - $3}
+                | LiteralExp '*' LiteralExp       {$1 * $3}
+                | LiteralExp '/' LiteralExp       {$1 `div` $3}
+                | num                             {$1}
+            
+
+{
+parseError :: [Token] -> a
+parseError _ = error "Parse error"
+
+main = do
+    s <- getContents
+    print (calc (lexer s))
+}
+
+
+-- Esercizio 7
+-- Scanner
+{
+module Scanner (Token(..), lexer) where
+}
+
+%wrapper "basic"
+
+$digit = 0-9
+@num = $digit+
+$alpha = [a-zA-z]
+
+tokens :-
+    $white+                                     ;
+    "##".*                                      ;
+    \=                                          { \s -> TokenEq }
+    \+                                          { \s -> TokenPlus }
+    \-                                          { \s -> TokenMinus }
+    \*                                          { \s -> TokenTimes }
+    \(                                          { \s -> TokenOpenRound }
+    \)                                          { \s -> TokenClosedRound }
+    \[                                          { \s -> TokenOpenBox }
+    \]                                          { \s -> TokenClosedBox }
+    @num                                        { \s -> TokenNum (read s) }
+    let                                         { \s -> TokenLet }
+    case                                        { \s -> TokenCase }
+    else                                        { \s -> TokenElse }
+    [$alpha \_] [$alpha $digit \_ \']*          { \s -> TokenVar s }
+
+{
+data Token
+    = TokenNum Int
+    | TokenPlus
+    | TokenMinus
+    | TokenTimes
+    | TokenOpenRound
+    | TokenClosedRound
+    | TokenOpenBox
+    | TokenClosedBox
+    | TokenEq
+    | TokenLet
+    | TokenVar String
+    | TokenCase
+    | TokenElse
+    deriving (Eq,Show)
+
+lexer = alexScanTokens
+}
+
+--Parser
+{
+module Main (main) where
+import Scanner
+}
+
+%name calc
+%tokentype { Token }
+%error { parseError }
+
+%token
+    '='     { TokenEq }
+    '+'     { TokenPlus }
+    '-'     { TokenMinus }
+    '*'     { TokenTimes }
+    '('     { TokenOpenRound }
+    ')'     { TokenClosedRound }
+    '['     { TokenOpenBox }
+    ']'     { TokenClosedBox }
+    num     { TokenNum $$ }
+    var     { TokenVar $$ }
+    let     { TokenLet }
+    case    { TokenCase }
+    else    { TokenElse }
+
+%left '='
+%left '+' '-'
+%left '*'
+%%
+
+Seq     :: { [Exp] }
+Seq     : Seq '(' Exp ')'       { $3 : $1 }
+        | {- Empty -}           { [] }
+
+Exp     :: { Exp }
+Exp     : let '(' Declarations ')' '(' Exp ')'       {Let $3 $6}
+        | case '(' Exp ')' ThenBody                  {Case $3 $5}
+        | '+' Exp Exp       {Plus $2 $3}
+        | '-' Exp Exp       {Minus $2 $3}
+        | '*' Exp Exp       {Times $2 $3}
+        | '=' Exp Exp       {Equal $2 $3}
+        | '(' Exp ')'       {$2}
+        | num               {Num $1}
+        | var               {Var $1}
+
+Declarations    :: { [Declaration] }    
+Declarations    : Declarations '[' var '(' Exp ')' ']'  { (Declaration $3 $5) : $1 }
+                | {- Empty -}   { [] }
+
+ThenBody        :: { [Then] }
+ThenBody        : '[' '(' Exp ')' '(' Exp ')' ']' '[' else '(' Exp ')' ']'     { (Then $3 $6) : (Else $12) : [] }
+                | '[' '(' Exp ')' '(' Exp ')' ']' ThenBody                     { (Then $3 $6) : $9 }
+                | {- Empty -}   { [] }
+
+{
+
+data Exp    
+    = Let [Declaration] Exp
+    | Case Exp [Then]
+    | Plus Exp Exp
+    | Minus Exp Exp
+    | Times Exp Exp
+    | Equal Exp Exp
+    | Num Int
+    | Var String
+    deriving Show
+
+data Declaration
+    = Declaration String Exp
+    deriving Show
+
+data Then
+    = Then Exp Exp
+    | Else Exp
+    deriving Show
+
+
+parseError :: [Token] -> a
+parseError _ = error "Parse error"
+
+main = do
+    s <- getContents
+    print (lexer s)
+    print (calc (lexer s))
+}
